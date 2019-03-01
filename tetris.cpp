@@ -77,6 +77,45 @@ public:
 			return;
 		}
 		
+		int dx = 0, dy = 0;
+		switch (dir) {
+			case KEY_LEFT:
+				dx = -1;
+				dy = 0;
+				break;
+			case KEY_RIGHT:
+				dx = 1;
+				dy = 0;
+				break;
+			case KEY_DOWN:
+				dx = 0;
+				dy = 1;
+				break;
+			default:
+				return;
+		}
+		
+		t->setCoord(t->getX() + dx, t->getY() + dy);
+		
+		int* shape = t->getCurrentShape();
+		int i;
+		int x, y, coord;
+		for (i = 0; i < 16; i++) {
+			x = t->getX() + i % 4;
+			y = t->getY() + i / 4;
+			if (CELL_ACTIVE == shape[i]) {
+				setCoord(x, y, CELL_BLANK);
+			}
+		}
+		for (i = 0; i < 16; i++) {
+			x = t->getX() + i % 4;
+			y = t->getY() + i / 4;
+			if (CELL_ACTIVE == shape[i]) {
+				setCoord(x + dx, y + dy, CELL_ACTIVE);
+			}
+		}
+		
+		
 		
 	}
 	
@@ -104,9 +143,12 @@ private:
 		int i;
 		int x, y, coord;
 		for (i = 0; i < 16; i++) {
-			coord = shape[i];
-			x = t->getX() + coord % 4;
-			y = t->getY() + coord / 4;
+			if (shape[i] != CELL_ACTIVE) {
+				continue;
+			}
+			
+			x = t->getX() + i % 4;
+			y = t->getY() + i / 4;
 			if (isOccupied(x + dx, y + dy)) {
 				return true;
 			}
