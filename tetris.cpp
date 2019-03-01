@@ -95,27 +95,28 @@ public:
 				return;
 		}
 		
-		t->setCoord(t->getX() + dx, t->getY() + dy);
+		int tx = t->getX();
+		int ty = t->getY();
 		
 		int* shape = t->getCurrentShape();
 		int i;
 		int x, y, coord;
 		for (i = 0; i < 16; i++) {
-			x = t->getX() + i % 4;
-			y = t->getY() + i / 4;
+			x = tx + i % 4;
+			y = ty + i / 4;
 			if (CELL_ACTIVE == shape[i]) {
 				setCoord(x, y, CELL_BLANK);
 			}
 		}
 		for (i = 0; i < 16; i++) {
-			x = t->getX() + i % 4;
-			y = t->getY() + i / 4;
+			x = tx + i % 4;
+			y = ty + i / 4;
 			if (CELL_ACTIVE == shape[i]) {
 				setCoord(x + dx, y + dy, CELL_ACTIVE);
 			}
 		}
 		
-		
+		t->setCoord(tx + dx, ty + dy);
 		
 	}
 	
