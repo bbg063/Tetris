@@ -52,19 +52,19 @@ public:
 	}
 	
 	int getX() {
-		return pos_X;
+		return posX_;
 	}
 	
 	int getY() {
-		return pos_Y;
+		return posY_;
 	}
 	
 	void setCoord(int x, int y) {
-		pos_X = x;
-		pos_Y = y;
+		posX_ = x;
+		posY_ = y;
 	}
 private:
-	int pos_X, pos_Y;
+	int posX_, posY_;
 	int shapeIdx_; // Value: 0 ~ 3
 	TetroType* tetroType_;
 };
@@ -73,10 +73,6 @@ class Map {
 public:
 	void print(std::string str, int pos_X, int pos_Y);
 	void moveTetromino(Tetromino* t, KEY dir) {
-		if (true == isColliding(t, dir)) {
-			return;
-		}
-		
 		int dx = 0, dy = 0;
 		switch (dir) {
 			case KEY_LEFT:
@@ -117,10 +113,8 @@ public:
 		}
 		
 		t->setCoord(tx + dx, ty + dy);
-		
 	}
 	
-private:
 	bool isColliding(Tetromino* t, KEY dir) {
 		int dx = 0, dy = 0;
 		switch (dir) {
@@ -158,6 +152,20 @@ private:
 		return false;
 	}
 	
+	void rotateTetromino(Tetromino* t) {
+		
+	}
+	
+	void settleTetromino(Tetromino* t) {
+		
+	}
+	
+private:
+	
+	void setCoord(int x, int y, int cellState) {
+		arr[y][x] = cellState;
+	}
+	
 	bool isOccupied(int x, int y) {
 		if (x >= MAP_WIDTH || x < 0 || y >= MAP_HEIGHT || y < 0) {
 			return true;
@@ -167,11 +175,7 @@ private:
 		}
 		return false;
 	}
-	
-	void setCoord(int x, int y, int cellState) {
-		arr[y][x] = cellState;
-	}
-	
+		
 	int arr[MAP_HEIGHT][MAP_WIDTH];
 };
 
@@ -180,12 +184,30 @@ private:
 class Game {
 public:
 	void handleInput(KEY input);
+	
+	void rotateTetromino(Map* map, Tetromino* t) {
+		if (false == map->isColliding(t, KEY_UP)) {
+			map->rotateTetromino(t);
+		}
+	}
+	
 	void moveTetromino(Map* map, Tetromino* t, KEY dir) {
-		map->moveTetromino(t, dir);
+		if (false == map->isColliding(t, dir)) {
+			map->moveTetromino(t, dir);
+		}
+		else if (dir == KEY_DOWN) {
+			map->settleTetromino(t);
+		}
+	}
+	
+	void dropTetromino(Map* map, Tetromino* t) {
+		while (false == map->isColliding(t, KEY_DOWN)) {
+			moveTetromino(map, t, KEY_DOWN);
+		}
+		moveTetromino(map, t, KEY_DOWN);
 	}
 	
 private:
-	
 	bool isPlaying_;
 	Map* map_;
 	Tetromino* activeBlock_;
@@ -194,6 +216,7 @@ private:
 void Game::handleInput(KEY input) {
 	switch (input) {
 		case KEY_UP:
+			
 			break;
 		case KEY_DOWN:
 			break;
